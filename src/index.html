@@ -1,45 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Football League Standings</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <title>Excel to JSON Conversion</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 <body>
-  <canvas id="leagueChart"></canvas>
+  <input type="file" id="excelFile" accept=".xlsx">
+  <button onclick="convertExcelToJson()">Convert Excel to JSON</button>
+
+  <table id="jsonTable"></table>
 
   <script>
-	// Get the reference to the canvas element
-	var ctx = document.getElementById('leagueChart').getContext('2d');
+    function convertExcelToJson() {
+      var fileInput = document.getElementById('excelFile');
+      var file = fileInput.files[0];
 
-	// Define the data for the chart
-	var chartData = {
-	  labels: ['Team A', 'Team B', 'Team C', 'Team D'], // Replace with your team names
-	  datasets: [
-	    {
-	      label: 'Points',
-	      data: [45, 38, 35, 28], // Replace with your team's points data
-	      backgroundColor: 'rgba(54, 162, 235, 0.5)', // Replace with desired color
-	      borderColor: 'rgba(54, 162, 235, 1)', // Replace with desired color
-	      borderWidth: 1
-	    }
-	  ]
-	};
+      if (!file) {
+        alert('Please select an Excel file');
+        return;
+      }
 
-	// Create the chart
-	var myChart = new Chart(ctx, {
-	  type: 'bar', // Replace with your desired chart type (e.g., bar, line, etc.)
-	  data: chartData,
-	  options: {
-	    responsive: true,
-	    scales: {
-	      y: {
-	        beginAtZero: true
-	      }
-	    }
-	  }
-	});
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        var data = new Uint8Array(e.target.result);
+        var workbook = XLSX.read(data, { type: 'array' });
+        var worksheet = workbook.Sheets[workbook.SheetNames[0]];
+        var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
+        // Call a function to render the JSON data in an HTML table
+        renderTable(jsonData);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function renderTable(jsonData) {
+      var table = document.getElementById('jsonTable');
+
+      // Generate table header
+      var headerRow = table.insertRow();
+      Object.keys(jsonData[0]).forEach(function (key) {
+        var th = document.createElement('th');
+        th.textContent = key;
+        headerRow.appendChild(th);
+      });
+
+      // Generate table rows
+      jsonData.forEach(function (dataRow) {
+        var row = table.insertRow();
+        Object.values(dataRow).forEach(function (value) {
+          var cell = row.insertCell();
+          cell.textContent = value;
+        });
+      });
+    }
   </script>
 </body>
 </html>
-
