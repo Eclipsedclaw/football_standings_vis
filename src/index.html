@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Football League Standings</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <canvas id="leagueChart"></canvas>
+
+  <script>
+	// Get the reference to the canvas element
+	var ctx = document.getElementById('leagueChart').getContext('2d');
+
+	// Define the data for the chart
+	var chartData = {
+	  labels: ['Team A', 'Team B', 'Team C', 'Team D'], // Replace with your team names
+	  datasets: [
+	    {
+	      label: 'Points',
+	      data: [45, 38, 35, 28], // Replace with your team's points data
+	      backgroundColor: 'rgba(54, 162, 235, 0.5)', // Replace with desired color
+	      borderColor: 'rgba(54, 162, 235, 1)', // Replace with desired color
+	      borderWidth: 1
+	    }
+	  ]
+	};
+
+	// Create the chart
+	var myChart = new Chart(ctx, {
+	  type: 'bar', // Replace with your desired chart type (e.g., bar, line, etc.)
+	  data: chartData,
+	  options: {
+	    responsive: true,
+	    scales: {
+	      y: {
+	        beginAtZero: true
+	      }
+	    }
+	  }
+	});
+
+  </script>
+</body>
+</html>
+
